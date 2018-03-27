@@ -124,36 +124,44 @@ class ProfileChange extends Component
 
     }
 
-    onPressImage=(id)=>{
-        if(id===forwardid+5)
+    onPressImage=(id,index)=>{
+        if(index === 0)
         {
-            forwardid=forwardid+5;
-            this.refs.scrollview.scrollTo({x:xValue});
-            (xValue <= xWidth*8) ? xValue = (xValue + xWidth) : xValue = xWidth*8;
+            this.setState({selectedId:this.state.selectedColor})
         }
-        else {
-           forwardid=forwardid-5;
-            xValue=xValue-(xWidth*2);
-            this.refs.scrollview.scrollTo({x:xValue});
-            (xValue <= xWidth*8) ? xValue = (xValue + xWidth) : xValue = xWidth*8;
+        else
+        {
+            if(id===forwardid+5)
+            {
+                forwardid=forwardid+5;
+                this.refs.scrollview.scrollTo({x:xValue});
+                (xValue <= xWidth*8) ? xValue = (xValue + xWidth) : xValue = xWidth*8;
+            }
+            else {
+                forwardid=forwardid-5;
+                xValue=xValue-(xWidth*2);
+                this.refs.scrollview.scrollTo({x:xValue});
+                (xValue <= xWidth*8) ? xValue = (xValue + xWidth) : xValue = xWidth*8;
+            }
+
+            count++
         }
 
-        count++
     };
     displayImages=()=>
     {
        return(
            userImage.map((data,index)=>{
                return(
-                   <View  style={{marginTop: '5%', marginBottom: '8%', flexDirection: 'row',width:(width/3),justifyContent:'center'}}>
+                   <View  style={{marginTop: '5%', marginBottom: '8%', flexDirection:'row',width:(width/3),justifyContent:'center'}}>
                        <TouchableOpacity key={index} onPress={()=> {{
                            if(this.state.selectedId!==data.id)
                            {
                                this.setState({selectedId:data.id});
-                               this.onPressImage(data.id);
+                               this.onPressImage(data.id,index);
                            }}
                        }}>
-                            <Image style={{height: 90, width: 90,opacity:(this.state.selectedId===data.id)?1:0.5}} source={data.photo}/>
+                            <Image style={{height: 90, width: 90,opacity:(this.state.selectedId===data.id)?1:0.3}} source={data.photo}/>
                        </TouchableOpacity>
                     </View>
                )
@@ -204,18 +212,75 @@ class ProfileChange extends Component
 
     onSwipeLeft(gestureState) {
         console.log("swipe left");
-        console.log(xValue);
-        this.refs.scrollview.scrollTo({x:xValue});
-        (xValue < xWidth*8) ? xValue = (xValue + xWidth) : xValue = xWidth*8;
+        console.log("selcetdcolor"+this.state.selectedColor);
+        if (this.state.selectedId < 44) {
 
+            //var index = this.state.selectedId + 5;
+
+            if(xValue < xWidth*8)
+            {
+                console.log("if called");
+                forwardid=forwardid+5;
+                this.refs.scrollview.scrollTo({x:xValue});
+                xValue = (xValue + xWidth);
+                var index = this.state.selectedId + 5;
+
+            }
+            else{
+
+                if(xValue === xWidth*8)
+                {
+                    console.log("else if called");
+                    forwardid=forwardid+5;
+                    this.refs.scrollview.scrollTo({x:xValue});
+                     index = this.state.selectedId + 5;
+                    xValue = xValue+1;
+                }
+                else
+                {
+                    index = this.state.selectedId;
+                    xValue = xValue+1
+                }
+
+            };
+
+            this.setState({
+                selectedId: index
+            });
+            console.log(index);
+            console.log(xValue);
+
+        }
+        count++
     }
 
     onSwipeRight(gestureState) {
         console.log("swipe right");
         console.log(xValue);
-        xValue=xValue-(xWidth*2);
-        this.refs.scrollview.scrollTo({x:xValue});
-        (xValue > xWidth) ? xValue = (xValue + xWidth) : xValue = xWidth;
+        if(this.state.selectedId<44) {
+            if (xValue > xWidth) {
+                console.log("if called");
+                forwardid=forwardid-5;
+                xValue=xValue-(xWidth*2);
+                this.refs.scrollview.scrollTo({x:xValue});
+                xValue = (xValue + xWidth);
+                var index = this.state.selectedId - 5;
+
+            }
+            else {
+
+                    index = this.state.selectedId;
+                    xValue = xValue
+                }
+
+        }
+        console.log(index);
+        console.log("xvalue"+xValue);
+        this.setState({
+            selectedId:index
+        });
+        count++;
+
     }
 
     render()
