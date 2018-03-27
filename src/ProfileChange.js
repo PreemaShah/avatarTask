@@ -106,6 +106,7 @@ let color=[
 let height=Dimensions.get('window').height;
 let width=Dimensions.get('window').width;
 let xValue=width/3;
+let xWidth=width/3;
 let forwardid=0;
 let count=0;
 let prevId=0;
@@ -128,21 +129,19 @@ class ProfileChange extends Component
         {
             forwardid=forwardid+5;
             this.refs.scrollview.scrollTo({x:xValue});
-            (xValue <= 1000) ? xValue = (xValue + 125) : xValue = 1000;
+            (xValue <= xWidth*8) ? xValue = (xValue + xWidth) : xValue = xWidth*8;
         }
         else {
            forwardid=forwardid-5;
-            xValue=xValue-250;
-            this.refs.scrollview.scrollTo({x: xValue});
-            (xValue <= 1000) ? xValue = (xValue + 125) : xValue = 1000;
+            xValue=xValue-(xWidth*2);
+            this.refs.scrollview.scrollTo({x:xValue});
+            (xValue <= xWidth*8) ? xValue = (xValue + xWidth) : xValue = xWidth*8;
         }
 
         count++
     };
-
     displayImages=()=>
     {
-
        return(
            userImage.map((data,index)=>{
                return(
@@ -175,18 +174,14 @@ class ProfileChange extends Component
 
         }
         else if(id===prevId){
-            console.log("in if else");
             this.setState({selectedId:id2+id});
             forwardid=id2+id;
-            console.log('forid:'+forwardid);
         }
 
         else
         {
-            console.log("in else");
             this.setState({selectedId:id2+id-prevId});
             forwardid=id2+id-prevId;
-            console.log('forid:'+forwardid);
         }
         prevId=id;
     };
@@ -209,14 +204,18 @@ class ProfileChange extends Component
 
     onSwipeLeft(gestureState) {
         console.log("swipe left");
-        this.onPressImage(this.state.selectedId)
+        console.log(xValue);
+        this.refs.scrollview.scrollTo({x:xValue});
+        (xValue < xWidth*8) ? xValue = (xValue + xWidth) : xValue = xWidth*8;
 
     }
 
     onSwipeRight(gestureState) {
         console.log("swipe right");
-        this.onPressImage(this.state.selectedId)
-
+        console.log(xValue);
+        xValue=xValue-(xWidth*2);
+        this.refs.scrollview.scrollTo({x:xValue});
+        (xValue > xWidth) ? xValue = (xValue + xWidth) : xValue = xWidth;
     }
 
     render()
@@ -273,16 +272,14 @@ class ProfileChange extends Component
                         </GestureRecognizer>
                 </View>
 
-                <View style={{justifyContent:'center',flexDirection:'row',marginLeft:20}}>
+                <View style={{alignSelf:'center',flexDirection:'row',justifyContent:'space-between'}}>
                     {
                         color.map((item, key)=> (
                                 <TouchableOpacity onPress={()=>{this.setState({selectedColor:key});
                                                                 userImage=[];
-                                                                this.setValues(key);
-
-                                }}>
-                                     <View style={{height:50,width:50,borderRadius:50/2,borderWidth:2,borderColor:(this.state.selectedColor===key)?'rgb(146,226,139)':'rgb(26,92,120)',justifyContent:'center',alignItems:'center',marginLeft:'5.3%'}}>
-                                        <View style={{height:38,width:38,borderRadius:38/2,backgroundColor:item,marginTop:'8%'}}/>
+                                                                this.setValues(key);}}>
+                                     <View style={{height:50,width:50,borderRadius:25,borderWidth:2,borderColor:(this.state.selectedColor===key)?'rgb(146,226,139)':'rgb(26,92,120)',justifyContent:'center',alignItems:'center'}}>
+                                        <View style={{height:38,width:38,borderRadius:19,backgroundColor:item}}/>
                                      </View>
                                 </TouchableOpacity>)
                         )
